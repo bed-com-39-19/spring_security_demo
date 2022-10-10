@@ -36,6 +36,10 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/v1/auth/login", "/api/v1/auth/refresh-token").permitAll();
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/v1/users").permitAll();
+
+        //Only people with admin roles can disable an account of a user
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/v1/users/disable-account/**").hasRole("ADMIN");
+        
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(tokenUtility()), UsernamePasswordAuthenticationFilter.class);
