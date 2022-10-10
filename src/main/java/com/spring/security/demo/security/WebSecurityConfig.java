@@ -39,6 +39,12 @@ public class WebSecurityConfig {
 
         //Only people with admin roles can disable an account of a user
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/v1/users/disable-account/**").hasRole("ADMIN");
+
+        //Updating a user role requires somebody to have either admin role or executive role
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/api/v1/users/update-role/**").hasAnyRole("ADMIN","EXECUTIVE");
+
+        //Viewing all the users in the system requires somebody to have both admin and executive roles
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/v1/users").hasRole("ADMIN").and().authorizeRequests().antMatchers(HttpMethod.GET,"/api/v1/users").hasRole("EXECUTIVE");
         
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
